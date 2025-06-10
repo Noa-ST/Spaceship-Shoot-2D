@@ -1,14 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class PowerUpDrop
-{
-    public GameObject powerUpPrefab;
-    [Range(0f, 1f)] public float dropChance;
-}
-
-public class GameController : MonoBehaviour
+public class GameController : Singleton<GameController>
 {
     [Header("Spawn Enemy")]
     [SerializeField] List<GameObject> enemyPrefabs;
@@ -22,8 +15,7 @@ public class GameController : MonoBehaviour
     [SerializeField] int maxEnemiesPerSpawn = 5;
     [SerializeField] float difficultyIncreaseInterval = 10f;
 
-    float m_spawnTime;
-    bool m_isGameOver;
+    float _spawnTime;
 
     float timeSinceStart;
     float difficultyTimer;
@@ -34,28 +26,28 @@ public class GameController : MonoBehaviour
 
 
     [Header("UI")]
-    int m_score;
-    UIManager uim;
-    AudioSource aus;
-    [SerializeField] AudioClip gameOverSound;
+    bool _isGameOver;
+    int _score;
 
-    void Start()
+    public int Score { get => _score; }
+    public GameState state;
+
+    public override void Awake()
     {
-        m_spawnTime = 0;
-        uim = FindObjectOfType<UIManager>();
-        aus = FindObjectOfType<AudioSource>();
-        uim.SetScoreText("Score: " + m_score);
+        MakeSingleton(false);
+        state = GameState.Playing;
+    }
+
+    public override void Start()
+    {
+        _spawnTime = 0;
+        AudioController.Ins.PlayBackgroundMusic();
     }
 
     void Update()
     {
-        if (m_isGameOver)
-        {
-            m_spawnTime = 0;
-            aus.PlayOneShot(gameOverSound);
-            uim.ShowGameOverPanel(true);
+        if (state == GameState.GameOver)
             return;
-        }
 
         timeSinceStart += Time.deltaTime;
         difficultyTimer += Time.deltaTime;
@@ -75,16 +67,16 @@ public class GameController : MonoBehaviour
             spawnTime = Mathf.Max(spawnTime, minSpawnTime); // không nhỏ hơn giới hạn
             spawnAcceleratorTimer = 0;
         }
-        m_spawnTime -= Time.deltaTime;
+        _spawnTime -= Time.deltaTime;
 
-        if (m_spawnTime <= 0)
+        if (_spawnTime <= 0)
         {
             for (int i = 0; i < enemiesPerSpawn; i++)
             {
                 SpawnEnemy();
             }
 
-            m_spawnTime = spawnTime;
+            _spawnTime = spawnTime;
         }
     }
 
@@ -114,34 +106,48 @@ public class GameController : MonoBehaviour
         }
     }
 
-
-    public void SetScore(int value)
-    {
-        m_score = value;
-    }
-
-    public int GetScore()
-    {
-        return m_score;
-    }
-
     public void ScoreIncrement(int value)
     {
-        if (m_isGameOver)
+        if (state != GameState.Playing) return;
+
+        _score += value;
+        Pref.BestScore = _score;
+
+        if (UIManager.Ins)
+        {
+            UIManager.Ins.UpdateScore(_score);
+        }
+    }
+
+    public void SetGameOver()
+    {
+        if (state == GameState.GameOver)
             return;
 
-        m_score += value;
-        uim.SetScoreText("Score: " + m_score);
+        state = GameState.GameOver;
+        DestroyAllWithTag(GameTag.Enemy.ToString());
+        DestroyAllWithTag(GameTag.Player.ToString()); 
+        Time.timeScale = 0f;
+        UIManager.Ins?.gameoverDialog.Show(true);
     }
-
-    public void SetGameOverState(bool state)
+    public void PauseGame()
     {
-        m_isGameOver = state;
+        state = GameState.Paused;
+        Time.timeScale = 0f;
     }
 
-    public bool IsGameOver()
+    public void ResumeGame()
     {
-        return m_isGameOver;
+        state = GameState.Playing;
+        Time.timeScale = 1f;
     }
 
+    private void DestroyAllWithTag(string tag)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
+        foreach (var obj in objects)
+        {
+            Destroy(obj);
+        }
+    }
 }

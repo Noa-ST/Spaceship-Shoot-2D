@@ -8,7 +8,7 @@ public class ScoreStar : MonoBehaviour
 
     void Start()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject player = GameObject.FindGameObjectWithTag(GameTag.Player.ToString());
         if (player != null)
         {
             playerTransform = player.transform;
@@ -25,13 +25,11 @@ public class ScoreStar : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(GameTag.Player.ToString()))
         {
-            GameController gc = FindObjectOfType<GameController>();
-            if (gc != null)
-            {
-                gc.ScoreIncrement(scoreValue);
-            }
+
+            GameController.Ins.ScoreIncrement(scoreValue);
+            AudioController.Ins.PlaySound(AudioController.Ins.gotCollectable);
 
             Destroy(gameObject);
         }

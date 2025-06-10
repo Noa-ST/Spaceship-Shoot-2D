@@ -7,10 +7,7 @@ public class DoubleShipShooter : MonoBehaviour
     public GameObject projectile;
     public Transform shootingPoint;
     public float shootInterval = 0.5f;
-    public AudioClip shootingSound;
-    public AudioSource aus;
-
-    private float shootTimer;
+    float shootTimer;
 
     void Update()
     {
@@ -32,9 +29,9 @@ public class DoubleShipShooter : MonoBehaviour
         if (projectile && shootingPoint)
         {
             Instantiate(projectile, shootingPoint.position, Quaternion.identity);
-            if (aus && shootingSound)
+            if (AudioController.Ins)
             {
-                aus.PlayOneShot(shootingSound);
+                AudioController.Ins.PlaySound(AudioController.Ins.hitSound);
             }
         }
     }

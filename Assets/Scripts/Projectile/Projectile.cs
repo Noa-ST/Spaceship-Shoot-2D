@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -7,18 +5,12 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private GameObject scoreStarPrefab;
     [SerializeField] private float timeToDestroy;
-    public AudioClip hitSound;
     public GameObject hitVFX;
-    AudioSource aus;
     Rigidbody2D rb;
-    GameController gc;
 
-    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        gc = FindObjectOfType<GameController>();
-        aus = FindObjectOfType<AudioSource>();
         Destroy(gameObject, timeToDestroy);
     }
 
@@ -30,11 +22,11 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag(GameTag.Enemy.ToString()))
         {
-            if (aus && hitSound)
+            if (AudioController.Ins)
             {
-                aus.PlayOneShot(hitSound);
+                AudioController.Ins.PlaySound(AudioController.Ins.hitSound);
             }
 
             if (hitVFX)
@@ -57,9 +49,9 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
 
             Destroy(collision.gameObject);
-            if (gc != null)
+            if (GameController.Ins != null)
             {
-                gc.TrySpawnPowerUp(collision.transform.position);
+                GameController.Ins.TrySpawnPowerUp(collision.transform.position);
             }
         } else if (CompareTag("SceneToplimit"))
         {

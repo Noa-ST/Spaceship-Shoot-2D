@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class SpaceshipMovemen : MonoBehaviour
@@ -9,27 +6,25 @@ public class SpaceshipMovemen : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform shootingPoint;
-    [SerializeField] private AudioSource aus;
-    [SerializeField] private AudioClip shootingSound;
-
-    GameController gc;
 
     float originalSpeed;
     bool isMultiShoot = false;
+
+    Coroutine speedUpCoroutine;
+    bool isSpeedUpActive = false;
 
     public GameObject doubleShipPrefab;
     GameObject doubleShipInstance;
 
     void Start()
     {
-        gc = FindObjectOfType<GameController>();
         originalSpeed = speed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gc.IsGameOver())
+        if (GameController.Ins.state != GameState.Playing)
             return;
 
         float xDir = Input.GetAxisRaw("Horizontal");
@@ -48,11 +43,14 @@ public class SpaceshipMovemen : MonoBehaviour
 
     private void Shoot ()
     {
+        if (GameController.Ins.state != GameState.Playing)
+            return;
+
         if (projectile && shootingPoint)
         {
-            if (aus && shootingSound)
+            if (AudioController.Ins)
             {
-                aus.PlayOneShot(shootingSound);
+                AudioController.Ins.PlaySound(AudioController.Ins.hitSound);
             }
 
             if (isMultiShoot)
@@ -70,6 +68,8 @@ public class SpaceshipMovemen : MonoBehaviour
 
     public void ActivatePowerUp(PowerUpType type, float duration)
     {
+        if (GameController.Ins.state != GameState.Playing)
+            return;
         StartCoroutine(HandlePowerUp(type, duration));
     }
 
@@ -78,9 +78,15 @@ public class SpaceshipMovemen : MonoBehaviour
         switch (type)
         {
             case PowerUpType.SpeedUp:
+                if (isSpeedUpActive)
+                {
+                    StopCoroutine(speedUpCoroutine);
+                    speed = originalSpeed; 
+                }
+
                 speed *= 1.5f;
-                yield return new WaitForSeconds(duration);
-                speed = originalSpeed;
+                isSpeedUpActive = true;
+                speedUpCoroutine = StartCoroutine(SpeedUp(duration));
                 break;
 
             case PowerUpType.DoubleShip:
@@ -91,7 +97,7 @@ public class SpaceshipMovemen : MonoBehaviour
                     DoubleShipShooter shooter = doubleShipInstance.GetComponent<DoubleShipShooter>();
                     if (shooter != null)
                     {
-                        shooter.mainShip = this.transform; // Cho nó follow tàu chính
+                        shooter.mainShip = this.transform; 
                     }
                 }
                 yield return new WaitForSeconds(duration);
@@ -110,16 +116,22 @@ public class SpaceshipMovemen : MonoBehaviour
         }
     }
 
+    private IEnumerator SpeedUp(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        speed = originalSpeed;
+        isSpeedUpActive = false;
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag(GameTag.Enemy.ToString()))
         {
-            gc.SetGameOverState(true);
+            GameController.Ins.SetGameOver();
+            AudioController.Ins.PlaySound(AudioController.Ins.gameover);
 
             Destroy(collision.gameObject);
-
-            Debug.Log("Enemy cham player");
         }
     }
 }

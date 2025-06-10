@@ -80,12 +80,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3acd8e3ad01c0604983ae6b5acc9ae5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7
+  speed: 9
   projectile: {fileID: 7451333951922692309, guid: de1a5290a94ae8c48a214495497c5e3c, type: 3}
   shootingPoint: {fileID: 5672164629452088088}
   aus: {fileID: 0}
   shootingSound: {fileID: 8300000, guid: a245ee5d75348c84a89ffb7992f1dc82, type: 3}
-  doubleShipPrefab: {fileID: 6971112848378990557, guid: ef35a04e8b60beb4c9d3e40e05009c1a, type: 3}
+  doubleShipPrefab: {fileID: 6971112848378990557, guid: 7081431cf83b5e146a1d8a88c237a121, type: 3}
 --- !u!212 &1087084695457292472
 SpriteRenderer:
   m_ObjectHideFlags: 0
