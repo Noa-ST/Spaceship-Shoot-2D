@@ -21,6 +21,7 @@ public class GameoverDialog : Dialog
     public void Replay()
     {
         Time.timeScale = 1f;
+        GameController.Ins.ResetGame();
         SceneLoader.Ins.LoadCurrentScene();
     }
 

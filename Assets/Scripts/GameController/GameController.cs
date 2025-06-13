@@ -46,7 +46,7 @@ public class GameController : Singleton<GameController>
 
     void Update()
     {
-        if (state == GameState.GameOver)
+        if (_isGameOver || state != GameState.Playing)
             return;
 
         timeSinceStart += Time.deltaTime;
@@ -121,10 +121,9 @@ public class GameController : Singleton<GameController>
 
     public void SetGameOver()
     {
-        if (state == GameState.GameOver)
-            return;
-
         state = GameState.GameOver;
+        _isGameOver = true;
+        _spawnTime = 0;
         DestroyAllWithTag(GameTag.Enemy.ToString());
         DestroyAllWithTag(GameTag.Player.ToString()); 
         Time.timeScale = 0f;
@@ -149,5 +148,18 @@ public class GameController : Singleton<GameController>
         {
             Destroy(obj);
         }
+    }
+
+    public void ResetGame()
+    {
+        _score = 0;
+        timeSinceStart = 0;
+        difficultyTimer = 0;
+        spawnAcceleratorTimer = 0;
+        enemiesPerSpawn = 1;
+        spawnTime = 2f;
+        _spawnTime = 0;
+        _isGameOver = false;
+        state = GameState.Playing;
     }
 }
