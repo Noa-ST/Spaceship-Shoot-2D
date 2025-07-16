@@ -47,6 +47,9 @@ TagManager:
   - name: BG
     uniqueID: 4067300773
     locked: 0
+  - name: Item
+    uniqueID: 2741672345
+    locked: 0
   - name: Ui
     uniqueID: 451325081
     locked: 0

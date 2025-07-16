@@ -50,7 +50,6 @@ MonoBehaviour:
   speed: 10
   scoreStarPrefab: {fileID: 6125289346944152690, guid: 409a3907664575c4d9010ff25f896ae0, type: 3}
   timeToDestroy: 5
-  hitSound: {fileID: 8300000, guid: ab297b593498a6e47ba84de770477cbe, type: 3}
   hitVFX: {fileID: 4695143739734615129, guid: c6c0f8497a7c53e44b91c6d5136658fb, type: 3}
 --- !u!212 &6805029336407137497
 SpriteRenderer:
@@ -91,7 +90,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -517581037
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8aeb9e233fbb8f14db39770841b78b94, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
