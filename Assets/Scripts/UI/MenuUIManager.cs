@@ -4,6 +4,7 @@ public class MenuUIManager : Singleton<MenuUIManager>
 {
     public GameObject menu;
     public BestScoreDialog bestScoreDialog;
+    public HelppanelDialog helppanelDialog;
     public SettingDialog settingDialog;
 
 
@@ -32,6 +33,14 @@ public class MenuUIManager : Singleton<MenuUIManager>
         if (settingDialog)
         {
             settingDialog.Show(isShow);
+        }
+    }
+
+    public void ShowHelpPanel(bool isShow)
+    {
+        if (helppanelDialog)
+        {
+            helppanelDialog.Show(isShow);
         }
     }
 }

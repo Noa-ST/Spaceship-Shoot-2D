@@ -384,6 +384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefabs:
   - {fileID: 7333418254290847384, guid: 171eb28a251ad7a4f9e73fb69f43764f, type: 3}
+  - {fileID: 7333418254290847384, guid: b234ad0839563954a87aa6289a411299, type: 3}
   - {fileID: 1739347544054018173, guid: 56b27a76a1968c74e9d642bc5075e658, type: 3}
   spawnTime: 2
   minSpawnTime: 0.5
@@ -399,7 +400,6 @@ MonoBehaviour:
     dropChance: 0.4
   - powerUpPrefab: {fileID: 4673956205102519316, guid: 82feeb25626916644b6c6bcb5e2d425c, type: 3}
     dropChance: 0.25
-  state: 0
 --- !u!4 &289965140
 Transform:
   m_ObjectHideFlags: 0
@@ -734,7 +734,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -517581037
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
