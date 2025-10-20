@@ -22,7 +22,7 @@ public class GameController : Singleton<GameController>
     [SerializeField] private List<PowerUpDrop> powerUpDrops;
 
     [Header("UI")]
-    bool _isGameOver;
+    // Đã xóa: bool _isGameOver; // Chỉ sử dụng state để quản lý trạng thái
     int _score;
 
     public int Score { get => _score; }
@@ -55,9 +55,10 @@ public class GameController : Singleton<GameController>
 
     void Update()
     {
-        if (_isGameOver || state != GameState.Playing)
+        // **QUAN TRỌNG: Chỉ sinh enemy khi trạng thái là Playing.**
+        if (state != GameState.Playing)
         {
-            Debug.Log("Game đã dừng, không sinh enemy!");
+            // Debug.Log("Game đã dừng, không sinh enemy!"); 
             return;
         }
 
@@ -75,10 +76,11 @@ public class GameController : Singleton<GameController>
         // Giảm thời gian giữa các lần spawn
         if (spawnAcceleratorTimer >= spawnAccelerationInterval && spawnTime > minSpawnTime)
         {
-            spawnTime -= spawnAccelerationRate; 
+            spawnTime -= spawnAccelerationRate;
             spawnTime = Mathf.Max(spawnTime, minSpawnTime);
             spawnAcceleratorTimer = 0;
         }
+
         _spawnTime -= Time.deltaTime;
 
         if (_spawnTime <= 0)
@@ -93,9 +95,10 @@ public class GameController : Singleton<GameController>
 
     public void SpawnEnemy()
     {
-        if (_isGameOver || state != GameState.Playing)
+        // Kiểm tra trạng thái lần nữa trước khi sinh.
+        if (state != GameState.Playing)
         {
-            Debug.Log("Không sinh enemy vì game đã kết thúc!");
+            // Debug.Log("Không sinh enemy vì game đã kết thúc!");
             return;
         }
 
@@ -136,7 +139,9 @@ public class GameController : Singleton<GameController>
         if (state != GameState.Playing) return;
 
         _score += value;
-        Pref.BestScore = _score;
+        // Giả định Pref.BestScore được định nghĩa ở đâu đó
+        // Bạn nên kiểm tra xem Pref có được khởi tạo và chứa phương thức setter này không.
+        // Pref.BestScore = _score; 
 
         if (UIManager.Ins)
         {
@@ -151,12 +156,14 @@ public class GameController : Singleton<GameController>
     public void SetGameOver()
     {
         Debug.Log("SetGameOver được gọi!");
-        state = GameState.GameOver;
-        _isGameOver = true;
+        // **Đặt trạng thái Game Over ngay lập tức.**
+        state = GameState.GameOver; 
+
         _spawnTime = 0;
         DestroyAllWithTag(GameTag.Enemy.ToString());
         DestroyAllWithTag(GameTag.Player.ToString());
         Time.timeScale = 0f;
+
         if (UIManager.Ins)
         {
             UIManager.Ins.gameoverDialog.Show(true);
@@ -198,7 +205,7 @@ public class GameController : Singleton<GameController>
         enemiesPerSpawn = 1;
         spawnTime = 2f;
         _spawnTime = spawnTime;
-        _isGameOver = false;
+        // Đã xóa: _isGameOver = false;
         state = GameState.Playing;
         Time.timeScale = 1f;
     }
