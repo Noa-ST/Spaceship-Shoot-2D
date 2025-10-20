@@ -157,11 +157,15 @@ public class GameController : Singleton<GameController>
     {
         Debug.Log("SetGameOver được gọi!");
         // **Đặt trạng thái Game Over ngay lập tức.**
-        state = GameState.GameOver; 
+        state = GameState.GameOver; // FIX: Đảm bảo trạng thái game được cập nhật
 
         _spawnTime = 0;
         DestroyAllWithTag(GameTag.Enemy.ToString());
         DestroyAllWithTag(GameTag.Player.ToString());
+
+        // Di chuyển logic phát âm thanh Game Over vào đây để tập trung xử lý
+        AudioController.Ins?.PlaySound(AudioController.Ins.gameover);
+
         Time.timeScale = 0f;
 
         if (UIManager.Ins)
